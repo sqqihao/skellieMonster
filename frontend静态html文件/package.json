@@ -1,7 +1,7 @@
 {
   "name": "fontend",
   "version": "0.1.0",
-  "homepage": "/frontend静态html文件/build/",
+  "homepage": "/skellieMonster/frontend静态html文件/build/",
   "private": true,
   "dependencies": {
     "@testing-library/jest-dom": "^5.17.0",
