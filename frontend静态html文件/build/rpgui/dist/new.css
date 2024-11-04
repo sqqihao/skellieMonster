@@ -1,0 +1,13 @@
+.rpgui-icon.knife {
+    background-image: url(img/icons/knife.png);
+    background-size: contain;
+}
+.rpgui-icon.dualswords {
+    background-image: url(img/icons/dualswords.png);
+    background-size: contain;
+}
+.rpgui-icon.tower {
+    background-image: url(img/icons/tower.png);
+    background-size: contain;
+}
+

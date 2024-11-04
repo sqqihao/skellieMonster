@@ -1,0 +1,13 @@
+body .ant-menu{
+  background-color: #343a40; /* 设置你想要的背景颜色 */
+}
+ .ant-menu, .ant-menu-item a {
+  color: #00c853!important;
+  line-height: 64px;
+}
+.logo-item img{
+	vertical-align: middle;
+}
+/*.ant-menu .ant-menu-item-selected::after{
+	border-bottom-color: #fff;
+}*/

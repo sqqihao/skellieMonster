@@ -1,0 +1,181 @@
+/* 在全局 CSS 文件中 */
+body, 
+.ant-typography, 
+.ant-menu, 
+.ant-btn {
+    font-family: "Press Start 2P"!important; /* 继承父元素的字体 */
+    font-size: inherit !important;   /* 继承父元素的字体大小 */
+    line-height: inherit !important;  /* 继承父元素的行高 */
+}
+@font-face {
+    font-family: 'Press Start 2P';
+    font-style: normal;
+    font-weight: 400;
+    src: local('Press Start 2P'),local('PressStart2P-Regular'),url(https://fonts.gstatic.com/s/pressstart2p/v4/8Lg6LX8-ntOHUQnvQ0E7o3uGXJk6cuEylToZ-uuaubQ.ttf) format('truetype')
+}
+
+
+.rpgui-content {
+  /* padding: 12px 24px ; */
+  background-image: linear-gradient(to right top, #000000, #0e0c0e, #282629, #1c1d20, #212529);
+  position: initial; 
+  overflow: scroll;
+}
+
+
+.master-container {
+  display: flex;
+  flex-wrap: wrap;
+}
+table.master-table{
+  vertical-align: middle; 
+}
+
+.mon {
+  display: block;
+  float: left;
+  padding: 0;
+  margin: 2%;
+  background-color: rgb(209, 203, 199) !important;
+  border-radius: 6px;
+}
+
+.monName {
+  color: silver !important;
+  text-shadow: 2px 2px #ffffff;
+  font-size: 0.85em !important;
+}
+
+
+.my-figure {
+  /* border: 2px outset; */
+  border-radius: 3px;
+  margin: 0;
+  padding: 3%;
+  background-color: #ffe6b3;
+  background-image: url(../sprites/background/9.png);
+  width: 15em;
+  background-size: 280px 200px;
+}
+
+
+.monBox {
+  border: 2px inset;
+  background-color: #ffe;
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+
+.monImg {
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+  width: 8em;
+  /* this defines image height */
+  height: 8em;
+  /* this defines image height	 */
+  margin-top: 2em;
+  /* this defines image height */
+  margin-bottom: 2em;
+}
+
+.monBackgroundImg {
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+
+.stat-area {
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+  margin-top: 1em;
+}
+
+.stat-line {
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.form-line {
+  display: inline-block;
+  margin-left: auto;
+  margin-right: auto;
+  margin-bottom: 0.5em;
+}
+
+.form-input {
+  float: right;
+  display: block;
+}
+
+.stat-label,
+.form-label {
+  display: inline;
+}
+.selling-div,
+.buying-div,
+.sharing-div {
+  display: flex;
+  flex-direction: column;
+  margin-left: auto;
+  margin-right: auto;
+  margin-top: 1em;
+  border-radius: 3px;
+  border-top-left-radius: 0px;
+  border-top-right-radius: 0px;
+  width: 15em;
+  padding: 3px;
+  background: linear-gradient(45deg, black, transparent);
+}
+
+
+.add-for-sale-label,
+.remove-from-sale-label,
+.sale-owner,
+.sale-price,
+.shareTo-owner,
+.shared-owner {
+  display: block;
+  line-height: 2.25em;
+  word-wrap: break-word;
+  font-size: calc(4px + 0.5vmin);
+  color: #fff;
+  text-shadow: -1px 0 #000, 0 1px #000, 1px 0 #000, 0 -1px #000;
+  padding: 2px;
+}
+
+
+.add-for-sale-input {
+  display: block;
+  margin-top: 2px;
+  margin-left: auto;
+  margin-right: auto;
+  width: 100%;
+}
+
+  .vs-container {
+    text-align: center;
+    margin: 20px auto;
+  }
+
+  #fight-btn{
+    
+  }
+  .knife{
+    
+  }
+ .custom-modal .modal-content {
+  background-color: transparent; /* 设置背景颜色为透明 */
+  border: none; /* 如果需要，也可以去掉边框 */
+}
+
+.custom-modal .modal-header,
+.custom-modal .modal-body,
+.custom-modal .modal-footer {
+  background-color: transparent; /* 设置头部、主体和底部背景颜色为透明 */
+}
