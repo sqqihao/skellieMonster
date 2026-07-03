@@ -8,6 +8,7 @@ import MonImages from '../sprites'
 import Spinner from './components/Spinner'
 
 import {addForSaleDiv, bgStyle, breedDiv, breedOption, buyDiv, imgDiv, monName, nameDiv, names, removeFromSaleDiv, statDiv, getMonsOrder} from "./components/utils.js"
+import { EmptyCardPlaceholder, EmptyTablePlaceholder } from "./components/EmptyPlaceholder"
 
 
 function MyShop(props){
@@ -40,40 +41,46 @@ function MyShop(props){
 	      <Row className="justify-content-center">
 	        <Col md="12"  className={displayType==0?"displayblock":"displaynone"}>
 		        <div className="master-container">
-		        	{mons&&mons.map(function(mon){
-		        		return (
-					        <React.Fragment key={mon.id}>
-					          <div className="mon">
-					            <figure className="my-figure">
-					              {nameDiv(mon)}
-					              {imgDiv(mon)}
-					              <figcaption>{statDiv(mon)}</figcaption>
-					            </figure>
-		                        
+		        	{!mons || mons.length === 0 ? (
+		        		<EmptyCardPlaceholder
+		        			icon="🏪"
+		        			title="Your Shop is Empty"
+		        			message="You haven't listed any creatures for sale yet. Go to the Monster page to set a price and list one."
+		        		/>
+		        	) : mons.map(function(mon){
+		        	return (
+				          <React.Fragment key={mon.id}>
+				            <div className="mon">
+				              <figure className="my-figure">
+				                {nameDiv(mon)}
+				                {imgDiv(mon)}
+				                <figcaption>{statDiv(mon)}</figcaption>
+				              </figure>
 
-							    <div className="selling-div">
-							      <label className="remove-from-sale-label">
-							        Price:
-							        <br />
-							        {mon.price}
-							      </label>
-							      {isRemoveFromSaleLoading ? (
-							        <button className="rpgui-button" type="button" style={{ width: '100%' }}>
-							          <Spinner color="#000" />
-							        </button>
-							      ) : (
-							        <button className="rpgui-button" type="button" onClick={() => removeFromSale(mon.id)}>
-							          Delist
-							          {isRemoveFromSaleLoading && <Spinner color="#000" />}
-							        </button>
-							      )}
-							    </div>
-					          </div>
-					        </React.Fragment>)
+
+							     <div className="selling-div">
+							       <label className="remove-from-sale-label">
+							         Price:
+							         <br />
+							         {mon.price ? mon.price.toString() : '0'}
+							       </label>
+							       {isRemoveFromSaleLoading ? (
+							         <button className="rpgui-button" type="button" style={{ width: '100%' }}>
+							           <Spinner color="#000" />
+							         </button>
+							       ) : (
+							         <button className="rpgui-button" type="button" onClick={() => removeFromSale(mon.id)}>
+							           Delist
+							           {isRemoveFromSaleLoading && <Spinner color="#000" />}
+							         </button>
+							       )}
+							     </div>
+				            </div>
+				          </React.Fragment>)
 		        	})}
 		        </div>
 	        </Col>
-	      </Row>>
+	      </Row>
 	      <Row className="justify-content-center">
 	        <Col md="12"  className={displayType==1?"displayblock":"displaynone"}>
 
@@ -89,11 +96,12 @@ function MyShop(props){
 		            </tr>
 		          </thead>
 		          <tbody>
-		            {mons&&mons.map((mon) => (
+		            {!mons || mons.length === 0 ? (
+		            	<EmptyTablePlaceholder colSpan={6} title="Your Shop is Empty" message="No creatures listed for sale." />
+		            ) : mons.map((mon) => (
 		                  <tr key={mon.id}>
-		                    <td>{mon.id}</td>
-		                    <td>
-		                      {' '}
+		                    <td data-label="ID">{mon.id}</td>
+		                    <td data-label="Img">
 		                      <div style={{ border: '2px solid gray', padding: '3px', borderRadius: '4px' }}>
 		                        <img
 		                          className="mylokimons-img"
@@ -104,23 +112,23 @@ function MyShop(props){
 		                        />
 		                      </div>
 		                    </td>
-		                    <td>{monName(mon.species) || ''} </td>
-		                    <td>{`HP ${mon.hp}, ATK ${mon.atk}, DEF ${mon.def}, SPD ${mon.speed}`}</td>
+		                    <td data-label="Name">{monName(mon.species) || ''} </td>
+		                    <td data-label="Stats">{`HP ${mon.hp}, ATK ${mon.atk}, DEF ${mon.def}, SPD ${mon.speed}`}</td>
 
-							<td>{mon.price || 0}</td>
-							<td>
-								<button
-								className="rpgui-button mylokimons-sell-btn" type="button" onClick={() => (mon.id ? removeFromSale(mon.id) : null)}>
-								{isRemoveFromSaleLoading ? <Spinner color="#000" /> : 'Delist'}
-								</button>
-							</td>
+								<td data-label="Price">{mon.price ? mon.price.toString() : '0'}</td>
+								<td data-label="Action">
+										<button
+										className="rpgui-button mylokimons-sell-btn" type="button" onClick={() => (mon.id ? removeFromSale(mon.id) : null)}>
+										{isRemoveFromSaleLoading ? <Spinner color="#000" /> : 'Delist'}
+										</button>
+									</td>
 		                  </tr>
 		                ))}
 		          </tbody>
 		        </Table>
 
 	        </Col>
-	      </Row>>
+	      </Row>
 
 	    </Container>
 

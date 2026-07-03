@@ -7,6 +7,7 @@ import ListRender from "./components/ListRender"
 import MonImages from '../sprites'
 import Spinner from './components/Spinner'
 import {addForSaleDiv, bgStyle, breedDiv, breedOption, buyDiv, imgDiv, monName, nameDiv, names, removeFromSaleDiv, statDiv, getMonsOrder} from "./components/utils.js"
+import { EmptyCardPlaceholder, EmptyTablePlaceholder } from "./components/EmptyPlaceholder"
 
 function Trade( props ){
 	const {otherMonsterSell,refresh,buyMon} = props;
@@ -20,11 +21,19 @@ function Trade( props ){
 		await refresh();
 	}
 	useEffect(function(){
+		// 关键修复：每次 mount 时主动 refresh 一次，确保 Trade 页显示最新链上数据。
+		// 原因：MenuRouters 的 useEffect([]) 只在 MenuRouters mount 时跑一次（在 app 启动时），
+		// 之后切路由不会重新触发 refresh。如果用户在别处停留几秒后切到 Trade，链上数据可能
+		// 已经变化（有人买了/卖了），Trade 页会显示陈旧数据。主动 refresh 保证切到 Trade 时
+		// 总是拉取最新数据。
+		refresh();
+	},[]);
+	useEffect(function(){
 		if(otherMonsterSell){
 			setMons(otherMonsterSell);
 		}
 
-	},otherMonsterSell);
+	},[otherMonsterSell]);
 
 	useEffect(function(){
 		if(!sortType)return;
@@ -38,42 +47,48 @@ function Trade( props ){
 	      <Row className="justify-content-center">
 	        <Col md="12"   className={displayType==0?"displayblock":"displaynone"}>
 		        <div className="master-container">
-		        	{mons&&mons.map(function(mon){
-		        		return (
-					        <React.Fragment key={mon.id}>
-					          <div className="mon">
-					            <figure className="my-figure">
-					              {nameDiv(mon)}
-					              {imgDiv(mon)}
-					              <figcaption>{statDiv(mon)}</figcaption>
-					            </figure>
-		                        
-							    <div className="buying-div">
-							      <div className="sale-price">
-							        Price:
-							        <br />
-							        {mon.price}
-							      </div>
-							      <div className="sale-owner">Creature Owner: {mon.owner} </div>
-							      {isBuyMonLoading ? (
-							        <button className="rpgui-button" type="button" style={{ width: '100%' }}>
-							          <Spinner color="#000" />
-							        </button>
-							      ) : (
-							        <button
-							          className="sale-btn rpgui-button"
-							          type="button"
-							          style={{ float: 'right' }}
-							          onClick={() => buyMonster(mon.id, mon.price)}
-							        >
-							          Buy
-							        </button>
-							      )}
-							    </div>
-					          </div>
-					        </React.Fragment>
-					    )
-		        	})}
+		        	{!mons || mons.length === 0 ? (
+		        		<EmptyCardPlaceholder
+		        			icon="🛒"
+		        			title="Marketplace is Empty"
+		        			message="No creatures are on sale right now. Come back later or check My Shop for your own listings."
+		        		/>
+		        	) : mons.map(function(mon){
+		            	return (
+		        	        <React.Fragment key={mon.id}>
+		        	          <div className="mon">
+		        	            <figure className="my-figure">
+		        	              {nameDiv(mon)}
+		        	              {imgDiv(mon)}
+		        	              <figcaption>{statDiv(mon)}</figcaption>
+		        	            </figure>
+	                           
+		        				    <div className="buying-div">
+		        				      <div className="sale-price">
+		        				        Price:
+		        				        <br />
+		        				        {mon.price.toString()}
+		        				      </div>
+		        				      <div className="sale-owner">Creature Owner: {mon.owner} </div>
+		        				      {isBuyMonLoading ? (
+		        				        <button className="rpgui-button" type="button" style={{ width: '100%' }}>
+		        				          <Spinner color="#000" />
+		        				        </button>
+		        				      ) : (
+		        				        <button
+		        				          className="sale-btn rpgui-button"
+		        				          type="button"
+		        				          style={{ float: 'right' }}
+		        				          onClick={() => buyMonster(mon.id, mon.price)}
+		        				        >
+		        				          Buy
+		        				        </button>
+		        				      )}
+		        				    </div>
+		        	          </div>
+		        	        </React.Fragment>
+		            	)
+		            })}
 		        </div>
 			</Col>
 		  </Row>
@@ -91,11 +106,12 @@ function Trade( props ){
 		            </tr>
 		          </thead>
 		          <tbody>
-		            {mons&&mons.map((mon) => (
+		            {!mons || mons.length === 0 ? (
+		            	<EmptyTablePlaceholder colSpan={6} title="Marketplace is Empty" message="No creatures for sale." />
+		            ) : mons.map((mon) => (
 		                  <tr key={mon.id}>
-		                    <td>{mon.id}</td>
-		                    <td>
-		                      {' '}
+		                    <td data-label="ID">{mon.id}</td>
+		                    <td data-label="Img">
 		                      <div style={{ border: '2px solid gray', padding: '3px', borderRadius: '4px' }}>
 		                        <img
 		                          className="mylokimons-img"
@@ -106,11 +122,11 @@ function Trade( props ){
 		                        />
 		                      </div>
 		                    </td>
-		                    <td>{monName(mon.species) || ''} </td>
-		                    <td>{`HP ${mon.hp}, ATK ${mon.atk}, DEF ${mon.def}, SPD ${mon.speed}`}</td>
+		                    <td data-label="Name">{monName(mon.species) || ''} </td>
+		                    <td data-label="Stats">{`HP ${mon.hp}, ATK ${mon.atk}, DEF ${mon.def}, SPD ${mon.speed}`}</td>
 
-							<td>{mon.price || 0}</td>
-							<td>
+								<td data-label="Price">{mon.price ? mon.price.toString() : '0'}</td>
+								<td data-label="Action">
 		                      <button
 		                        className="rpgui-button mylokimons-sell-btn"
 		                        type="button"
@@ -118,14 +134,14 @@ function Trade( props ){
 		                      >
 		                        {isBuyMonLoading ? <Spinner color="#000" /> : 'Buy'}
 		                      </button>
-							</td>
+								</td>
 		                  </tr>
 		                ))}
 		          </tbody>
 		        </Table>
 			</Col>
 		  </Row>
-		 </Container>
+	 </Container>
 	)
 }
 //

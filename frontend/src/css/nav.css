@@ -1,13 +1,199 @@
-body .ant-menu{
-  background-color: #343a40; /* 设置你想要的背景颜色 */
+/* [Nav-C] 汉堡菜单：desktop 横向，mobile 折叠到 Drawer
+   用 .skellie-nav 前缀避免被 Bootstrap 覆盖
+*/
+body .ant-menu {
+  background-color: #343a40;
 }
- .ant-menu, .ant-menu-item a {
-  color: #00c853!important;
+.ant-menu, .ant-menu-item a {
+  color: #00c853 !important;
   line-height: 64px;
 }
-.logo-item img{
-	vertical-align: middle;
+
+.skellie-nav {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 12px 20px;
+  padding: 8px 20px;
+  min-height: 64px;
+  max-width: 1600px;
+  margin: 0 auto;
+  position: relative;
 }
-/*.ant-menu .ant-menu-item-selected::after{
-	border-bottom-color: #fff;
-}*/
+.skellie-nav .skellie-logo {
+  vertical-align: middle;
+  flex-shrink: 0;
+  width: 32px;
+  height: 32px;
+}
+
+.skellie-nav-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 6px;
+  flex: 1 1 auto;
+  align-items: center;
+  justify-content: center;
+  min-width: 0;
+}
+.skellie-nav-link {
+  display: inline-block !important;
+  padding: 8px 16px !important;
+  border-radius: 4px;
+  white-space: nowrap;
+  font-size: 14px !important;
+  font-weight: normal !important;
+  color: #00c853 !important;
+  text-decoration: none;
+  background: transparent;
+  border: 0;
+  transition: background 0.15s;
+  margin: 0 4px;
+}
+.skellie-nav-link:hover {
+  background: rgba(0, 200, 83, 0.18) !important;
+  color: #00e676 !important;
+}
+.skellie-nav-link.active {
+  background: rgba(0, 200, 83, 0.25) !important;
+  color: #00e676 !important;
+  font-weight: 600 !important;
+}
+
+.skellie-nav-wallet {
+  flex-shrink: 0;
+  margin-left: auto;
+}
+
+/* 汉堡按钮：默认隐藏（仅 mobile 显示） */
+.skellie-nav-burger {
+  display: none !important;
+  font-size: 20px;
+  color: #00c853 !important;
+  width: 40px;
+  height: 40px;
+  padding: 0 !important;
+  flex-shrink: 0;
+  margin-left: 8px;
+}
+.skellie-nav-burger:hover {
+  background: rgba(0, 200, 83, 0.12) !important;
+  color: #00e676 !important;
+}
+
+/* === 抽屉内容 === */
+.skellie-drawer-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  color: #00c853;
+  font-size: 16px;
+  font-weight: 600;
+}
+.skellie-drawer-header > span {
+  flex: 1 1 auto;
+}
+.skellie-drawer-header .ant-btn {
+  color: #aaa !important;
+  margin-left: auto;
+}
+.skellie-drawer-header .ant-btn:hover {
+  color: #00e676 !important;
+}
+.skellie-drawer-logo {
+  width: 28px;
+  height: 28px;
+}
+
+.skellie-drawer-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+.skellie-drawer-list li {
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
+.skellie-drawer-link {
+  display: block;
+  padding: 16px 20px;
+  color: #00c853 !important;
+  text-decoration: none !important;
+  font-size: 16px;
+  font-weight: 500;
+  transition: background 0.15s;
+}
+.skellie-drawer-link:hover,
+.skellie-drawer-link:focus {
+  background: rgba(0, 200, 83, 0.1);
+  color: #00e676 !important;
+}
+.skellie-drawer-link.active {
+  background: rgba(0, 200, 83, 0.2);
+  color: #00e676 !important;
+  font-weight: 700;
+  border-left: 3px solid #00e676;
+}
+.skellie-drawer-wallet {
+  padding: 20px;
+  border-top: 1px solid #333;
+  margin-top: 20px;
+}
+
+/* === 中等屏 (1101-1280): 横向不 wrap，缩小 gap/font 腾出空间 === */
+@media (max-width: 1280px) and (min-width: 1101px) {
+  .skellie-nav {
+    gap: 6px 12px;
+    padding: 8px 14px;
+  }
+  .skellie-nav-links {
+    justify-content: flex-start;
+    gap: 2px 4px;
+  }
+  .skellie-nav-link {
+    padding: 6px 10px !important;
+    font-size: 13px !important;
+    margin: 0 2px;
+  }
+  /* 钱包按钮缩小，省出 30-40px */
+  .skellie-nav-wallet .ant-btn {
+    padding: 4px 10px !important;
+    font-size: 12px !important;
+  }
+}
+
+/* === 较小屏 (<1100): 切汉堡菜单，不再横向挤 === */
+@media (max-width: 1100px) {
+  .skellie-nav {
+    flex-wrap: nowrap !important;  /* 强制不 wrap，避免 nav 自己换行 */
+  }
+  .skellie-nav-links {
+    display: none !important;       /* 隐藏横向 links，走抽屉 */
+  }
+  .skellie-nav-burger {
+    display: inline-flex !important;  /* 显示汉堡 */
+    order: 4;
+  }
+  .skellie-nav-wallet {
+    order: 2;
+    margin-left: auto;
+  }
+  .skellie-logo {
+    order: 1;
+  }
+}
+
+/* === 移动端 (<768): 收一下 padding / gap === */
+@media (max-width: 768px) {
+  .skellie-nav {
+    gap: 8px 12px;
+    padding: 6px 12px;
+  }
+}
+
+/* 超小屏 logo 略小 */
+@media (max-width: 480px) {
+  .skellie-logo {
+    width: 28px;
+    height: 28px;
+  }
+}

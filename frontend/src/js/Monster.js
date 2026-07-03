@@ -6,14 +6,13 @@ import Col from 'react-bootstrap/Col';
 import ListRender from "./components/ListRender"
 import MonImages from '../sprites'
 import Spinner from './components/Spinner'
+import { EmptyCardPlaceholder, EmptyTablePlaceholder } from "./components/EmptyPlaceholder"
 
 import {addForSaleDiv, bgStyle, breedDiv, breedOption, buyDiv, imgDiv, monName, nameDiv, names, removeFromSaleDiv, statDiv, getMonsOrder} from "./components/utils.js"
 function Monster(props){
 	const {monster, refresh, sellMon} = props;
-	// debugger;
 	const [mons, setMons] = useState([]);
 
-	// mons = mons.concat(JSON.parse(JSON.stringify(mons)));
 	const [isAddForSaleLoading, setIsAddForSaleLoading] = useState(false);
 	const [displayType,setDisplayType] = useState(0);
 	const [sortType,setSortType] = useState("");
@@ -25,7 +24,6 @@ function Monster(props){
 	},[sortType]);
 
 	useEffect(function(){
-		// debugger;
 		setMons(monster)
 	},[monster]);
 
@@ -34,57 +32,63 @@ function Monster(props){
 		let tx = await sellMon(_id,_price);
 		console.log(tx);
 		if(tx) {
-			// debugger;
 			await refresh();
 		}
-
 	}
 	function changePrice(_id,_price) {
-		mons.map((e,index)=>{
-			if(e.id==_id){e.price = parseInt(_price)}
+		// eslint-disable-next-line no-undef
+		const newPrice = typeof _price === 'bigint' ? _price : BigInt(String(_price || '0'));
+		const newMons = mons.map((e) => {
+			if (e.id == _id) {
+				return { ...e, price: newPrice };
+			}
+			return e;
 		});
-		// console.log(mons)
-		//对象内部属性更改并不会让怪物重绘，需要一整个更新
-		setMons(JSON.parse(JSON.stringify(mons)));
+		setMons(newMons);
 	};
+	const isEmpty = !mons || mons.length === 0;
 	return (
 	    <Container className="vh-100">
 		  <ListRender setSortType={setSortType} setDisplayType={setDisplayType} />
 	      <Row className="justify-content-center" >
 	        <Col md="12" className={displayType==0?"displayblock":"displaynone"}>
 		        <div className="master-container ">
-		        	{mons&&mons.map(function(mon){
-		            	// let monsterPrice = mon.price;
-		        		return (
-					        <React.Fragment key={mon.id}>
-					          <div className="mon">
-					            <figure className="my-figure">
-					              {nameDiv(mon)}
-					              {imgDiv(mon)}
-					              <figcaption>{statDiv(mon)}</figcaption>
-					            </figure>
-							    <div className="selling-div">
-							      <label className="add-for-sale-label">Set price:</label>
-							      <input type="number" value={mon.price} className="add-for-sale-input" 
+		        	{isEmpty ? (
+		        		<EmptyCardPlaceholder
+		        			icon="🐉"
+		        			title="No Monsters Yet"
+		        			message="You don't own any creatures. Try breeding in the Breed page or buy one from the Trade page."
+		        		/>
+		        	) : mons.map(function(mon){
+		            	return (
+				          <React.Fragment key={mon.id}>
+				            <div className="mon">
+				              <figure className="my-figure">
+				                {nameDiv(mon)}
+				                {imgDiv(mon)}
+				                <figcaption>{statDiv(mon)}</figcaption>
+				              </figure>
+							     <div className="selling-div">
+							       <label className="add-for-sale-label">Set price:</label>
+							       <input type="number" value={mon.price} className="add-for-sale-input"
 			                        onChange={(e) => {
-			                          // monsterPrice = e.target.value;
 			                          changePrice(mon.id,e.target.value);
-			                        }} 
+			                        }}
 			                      />
-							      {isAddForSaleLoading ? (
-							        <button className="rpgui-button" type="button" style={{ width: '100%' }}>
-							          <Spinner color="#000" />
-							        </button>
-							      ) : (
-							        <button className="rpgui-button" type="button" onClick={() => addForSale(mon.id, mon.price)}>
-							          Sell
-							        </button>
-							      )}
-							    </div>
-					          </div>
-					        </React.Fragment>
-					    )
-		        	})}
+							       {isAddForSaleLoading ? (
+							         <button className="rpgui-button" type="button" style={{ width: '100%' }}>
+							           <Spinner color="#000" />
+							         </button>
+							       ) : (
+							         <button className="rpgui-button" type="button" onClick={() => addForSale(mon.id, mon.price)}>
+							           Sell
+							         </button>
+							       )}
+							     </div>
+				            </div>
+				          </React.Fragment>
+		            	)
+		            })}
 		        </div>
 	        </Col>
 	      </Row>
@@ -103,13 +107,14 @@ function Monster(props){
 		            </tr>
 		          </thead>
 		          <tbody>
-		            {mons&&mons.map((mon) => {
-		            	  // let monsterPrice = mon.price;
-
+		            {isEmpty ? (
+		            	<EmptyTablePlaceholder colSpan={6}
+		            		title="No Monsters Yet"
+		            		message="Try breeding in the Breed page or buy one from the Trade page." />
+		            ) : mons.map((mon) => {
 		                  return <tr key={mon.id}>
-		                    <td>{mon.id}</td>
-		                    <td>
-		                      {' '}
+		                    <td data-label="ID">{mon.id}</td>
+		                    <td data-label="Img">
 		                      <div style={{ border: '2px solid gray', padding: '3px', borderRadius: '4px' }}>
 		                        <img
 		                          className="mylokimons-img"
@@ -120,20 +125,19 @@ function Monster(props){
 		                        />
 		                      </div>
 		                    </td>
-		                    <td>{monName(mon.species) || ''} </td>
-		                    <td>{`HP ${mon.hp}, ATK ${mon.atk}, DEF ${mon.def}, SPD ${mon.speed}`}</td>
-		                    <td>
+		                    <td data-label="Name">{monName(mon.species) || ''} </td>
+		                    <td data-label="Stats">{`HP ${mon.hp}, ATK ${mon.atk}, DEF ${mon.def}, SPD ${mon.speed}`}</td>
+		                    <td data-label="Price">
 		                      <input
 		                        type="number"
 		                        className="add-for-sale-input"
 		                        value={mon.price}
 		                        onChange={(e) => {
-		                          // monsterPrice = e.target.value
 		                          changePrice(mon.id,e.target.value);
 		                        }}
 		                      />
 		                    </td>
-		                    <td>
+		                    <td data-label="Action">
 		                      <button
 		                        className="rpgui-button mylokimons-sell-btn"
 		                        type="button"

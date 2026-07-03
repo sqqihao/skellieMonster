@@ -1,0 +1,36 @@
+# Dependencies
+node_modules/
+*/node_modules/
+
+# Hardhat compile output (run `npm run compile` to regenerate)
+backend/artifacts/
+backend/cache/
+backend/typechain/
+backend/typechain-types/
+
+# Local env
+.env
+.env.local
+*.env
+
+# Logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# OS
+.DS_Store
+Thumbs.db
+
+# IDE
+.vscode/
+.idea/
+
+# Tests / coverage
+coverage/
+reports/
+
+# TODO: build/ is committed (serves GH Pages from frontend/build/, see README)
+# If you don't need GH Pages, replace this exception with `frontend/build/`
+!frontend/build/

@@ -1,0 +1,215 @@
+/* === Empty Placeholder === */
+.empty-placeholder {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 48px 20px;
+  text-align: center;
+  color: #c0c0c0;
+  min-height: 200px;
+  /* 关键：在 .master-container (flex) 里让 placeholder 占满整行并居中 */
+  flex: 1 1 100%;
+  max-width: 480px;
+  margin: 24px auto;
+}
+.empty-icon {
+  font-size: 56px;
+  margin-bottom: 16px;
+  opacity: 0.6;
+  filter: grayscale(0.3);
+}
+.empty-title {
+  font-size: 20px;
+  margin: 0 0 8px;
+  color: #e0e0e0;
+  font-weight: 600;
+}
+.empty-message {
+  font-size: 14px;
+  color: #909090;
+  margin: 0 0 16px;
+  max-width: 420px;
+  line-height: 1.5;
+}
+.empty-action {
+  margin-top: 8px;
+}
+
+.empty-card-placeholder {
+  /* [F-fix] master-container 是 flex 容器，不是 grid，
+     grid-column 无效。改用 flex 让占位符占满整行 */
+  flex: 1 1 100%;
+  display: flex;
+  justify-content: center;
+  width: 100%;
+}
+
+.empty-table-cell {
+  padding: 0 !important;
+  background: rgba(0, 0, 0, 0.2);
+}
+
+/* === ListRender 控件 === */
+.list-render {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  padding: 8px;
+  width: 100%;
+}
+.list-render > div { display: flex; flex-direction: column; align-items: center; gap: 8px; width: 100%; }
+.list-render h1.p1-for-centering { margin: 0; font-size: 20px; text-align: center; }
+.list-render .col, .list-render [class*="col-"] {
+  display: flex !important; flex-wrap: wrap; align-items: center; justify-content: center; gap: 6px; width: 100%;
+}
+.display-style-btn { padding: 4px 8px; min-width: 36px; }
+.order-dropdown { width: auto; min-width: 100px; }
+@media (max-width: 768px) {
+  .list-render h1.p1-for-centering { font-size: 16px; }
+  .display-style-btn { padding: 3px 6px; font-size: 12px; }
+  .order-dropdown .dropdown-toggle { font-size: 12px; padding: 4px 8px; }
+}
+
+/* === 响应式 (mobile < 768px) === */
+@media (max-width: 768px) {
+  /* 1. 全局：卡片栅格变单列 */
+  .master-container {
+    grid-template-columns: 1fr !important;
+    gap: 12px !important;
+    padding: 8px !important;
+  }
+  .mon {
+    width: 100% !important;
+    max-width: 100% !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    background-color: rgba(255, 255, 255, 0.04) !important;
+  }
+  /* [mobile] figure 改 column 布局，图在上属性在下，避免横向挤压 */
+  .my-figure {
+    width: 100% !important;
+    flex-direction: column !important;
+    align-items: center !important;
+    padding: 12px 8px !important;
+    background: none !important;
+    background-color: transparent !important;
+  }
+  .monBox {
+    width: 120px !important;
+    height: 120px !important;
+    margin: 0 auto 8px !important;
+  }
+  .monImg {
+    width: 96px !important;
+    height: 96px !important;
+  }
+  .stat-area {
+    width: 100% !important;
+    flex: none !important;
+  }
+  .stat-line {
+    font-size: 12px !important;
+  }
+  /* name + # 标签居中 */
+  .my-figure > div:first-child {
+    justify-content: center !important;
+    width: 100% !important;
+  }
+
+  /* 2. selling/buying/sharing div 横向布局 */
+  .selling-div, .buying-div, .sharing-div {
+    width: 100% !important;
+    float: none !important;
+    flex-direction: row !important;
+    flex-wrap: wrap !important;
+    align-items: center !important;
+    gap: 8px !important;
+    padding: 8px !important;
+  }
+  .selling-div .rpgui-button,
+  .buying-div .rpgui-button,
+  .sharing-div .rpgui-button {
+    width: auto !important;
+    flex: 1 1 auto !important;
+  }
+  .selling-div input,
+  .buying-div input,
+  .sharing-div input {
+    flex: 1 1 100px !important;
+    min-width: 80px !important;
+  }
+
+  /* 3. 表 → 卡片模式（窄屏表格难读） */
+  .master-table thead { display: none; }
+  .master-table, .master-table tbody, .master-table tr, .master-table td {
+    display: block !important;
+    width: 100% !important;
+  }
+  .master-table tr {
+    margin-bottom: 12px !important;
+    border: 1px solid rgba(255, 255, 255, 0.15) !important;
+    border-radius: 6px !important;
+    padding: 8px !important;
+  }
+  .master-table td {
+    padding: 4px 0 !important;
+    border: none !important;
+    text-align: left !important;
+  }
+  .master-table td::before {
+    content: attr(data-label);
+    display: inline-block;
+    width: 80px;
+    font-weight: 600;
+    color: #aaa;
+    margin-right: 8px;
+  }
+  .dojo-results-table thead { display: table-header-group; }
+  .dojo-results-table td::before { content: ''; }
+  .dojo-results-table td { text-align: center !important; }
+
+  /* 4. Container 减少内边距 */
+  .vh-100 { padding: 0 4px !important; }
+  .container, .container-fluid { padding-left: 8px !important; padding-right: 8px !important; }
+
+  /* 5. ListRender 控件缩小 */
+  .list-render h1.p1-for-centering { font-size: 18px !important; }
+  .display-style-btn { padding: 4px 8px !important; }
+
+  /* 6. NFT 页：单列 */
+  .rpgui-container.framed-grey {
+    margin: 8px 0 !important;
+    padding: 12px !important;
+  }
+
+  /* 7. Share / Dojo 表单 */
+  .form-line-share {
+    flex-direction: column !important;
+    align-items: stretch !important;
+  }
+  .form-line-share input {
+    width: 100% !important;
+    margin-top: 4px !important;
+  }
+
+  /* 8. Modal 全屏化 */
+  .custom-modal .modal-dialog {
+    max-width: 100% !important;
+    margin: 0 !important;
+  }
+
+  /* 9. Placeholder 调整 */
+  .empty-placeholder { padding: 32px 12px; min-height: 160px; }
+  .empty-icon { font-size: 40px; }
+  .empty-title { font-size: 16px; }
+  .empty-message { font-size: 13px; }
+}
+
+/* === 中等屏 (768-1100) === */
+@media (min-width: 769px) and (max-width: 1100px) {
+  .master-container {
+    grid-template-columns: repeat(2, 1fr) !important;
+  }
+}

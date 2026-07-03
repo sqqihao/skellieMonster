@@ -37,7 +37,7 @@ function useSellBuy(){
 			if(!event)return;
 			console.log("事件名:", event&&event.name);
 			console.log("事件数据:", event&&event.args);
-			event&&event.name&&(eventResult[event.name] = parseInt(event.args[0]));
+			eventResult[event.name] = event.args[0].toString();
 		});
 
 		return eventResult;

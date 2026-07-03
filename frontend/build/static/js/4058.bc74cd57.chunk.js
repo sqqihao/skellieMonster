@@ -1,0 +1,2 @@
+"use strict";(self.webpackChunkfontend=self.webpackChunkfontend||[]).push([[4058],{4058:(e,n,t)=>{t.r(n),t.d(n,{WebSocket:()=>o});const o=function(){if("undefined"!==typeof WebSocket)return WebSocket;if("undefined"!==typeof global.WebSocket)return global.WebSocket;if("undefined"!==typeof window.WebSocket)return window.WebSocket;if("undefined"!==typeof self.WebSocket)return self.WebSocket;throw new Error("`WebSocket` is not supported in this environment")}()}}]);
+//# sourceMappingURL=4058.bc74cd57.chunk.js.map

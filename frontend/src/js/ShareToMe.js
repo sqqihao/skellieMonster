@@ -6,6 +6,7 @@ import Col from 'react-bootstrap/Col';
 import Spinner from './components/Spinner';
 
 import {addForSaleDiv, bgStyle, breedDiv, breedOption, buyDiv, imgDiv, monName, nameDiv, names, removeFromSaleDiv, statDiv} from "./components/utils.js"
+import { EmptyPlaceholder } from "./components/EmptyPlaceholder"
 
 function ShareToMe(props){
 
@@ -35,8 +36,14 @@ function ShareToMe(props){
 
       	  <div className="rpgui-container framed-grey table-container">
 		      <Row className="justify-content-center">
-			        <Col  md={{ span: 10 }}>
-			            {mons&&mons.map((mon) => (
+		        <Col  md={{ span: 10 }}>
+		        	{!mons || mons.length === 0 ? (
+		        		<EmptyPlaceholder
+		        			icon="📬"
+		        			title="No Shared Creatures"
+		        			message="Nobody has shared any creatures with you yet."
+		        		/>
+		        	) : mons.map((mon) => (
 		                    <React.Fragment key={mon?.id}>
 		                      <div className="mon">
 		                        <figure className="my-figure">
@@ -63,8 +70,8 @@ function ShareToMe(props){
 		                        </div>
 		                      </div>
 		                    </React.Fragment>
-			            ))}
-			        </Col>
+		            	))}
+		        </Col>
 		      </Row>
 		    </div>
 

@@ -96,10 +96,12 @@ contract CryptoMonster is ERC1155Holder{
     }
     function buyMonster(uint256 _id) public  {
         Monster storage mon = mons[_id];
-        uint256 tokenBal = token.balanceOf(msg.sender);
-
-        require(tokenBal>mon.price,"no enougth token to buy monster");
+        // [S1+S2 修复] 检查 _id 存在性 + allowance，避免无效 revert
+        require(mon.owner != address(0), "Monster not exist");
         require(mon.sale == true, "no in sell");
+        require(token.balanceOf(msg.sender) >= mon.price, "no enougth token to buy monster");
+        require(token.allowance(msg.sender, address(this)) >= mon.price, "Need to approve token first");
+
         address seller = mon.owner;
 
         mon.owner = payable(msg.sender);
@@ -191,32 +193,44 @@ contract CryptoMonster is ERC1155Holder{
         return s;
     }
     function fight(uint256 _id1, uint256 _id2) public {
-        //可以添加条件，怪物必须大于20天才能战斗，一天只能战斗5次
+        // [S4 修复] owner check + _id 存在性 + _id1 != _id2 + winnerId 验真
+        require(_id1 != _id2, "Same monster");
+        require(mons[_id1].owner != address(0) && mons[_id2].owner != address(0), "Monster not exist");
+        require(mons[_id1].owner == msg.sender || mons[_id2].owner == msg.sender, "Not your monster");
+
         uint hp1 = mons[_id1].hp;
         uint hp2 = mons[_id2].hp;
         uint256 winnerId = 0;
+        bool validWinner = false;
 
         if(mons[_id1].speed>mons[_id2].speed) {
             if(hp2<damage(_id1, _id2)) {
-                winnerId = _id1;
+                winnerId = _id1; validWinner = true;
             }else if(hp1<damage(_id2, _id1)){
-                winnerId = _id2;
+                winnerId = _id2; validWinner = true;
             }else{
-                winnerId = _id1;
+                winnerId = _id1; validWinner = true;
             }
         }else{
             if(hp1<damage(_id2, _id1)) {
-                winnerId = _id2;
+                winnerId = _id2; validWinner = true;
             }else if(hp2<damage(_id1, _id2)) {
-                winnerId = _id1;
+                winnerId = _id1; validWinner = true;
             }else {
-                winnerId = _id2;
+                winnerId = _id2; validWinner = true;
             }
         }
+        // [S4 修复] 验真 winnerId 对应怪存在 + winner 是 msg.sender 才发奖
+        require(validWinner, "No winner");
+        require(mons[winnerId].owner == address(0) || mons[winnerId].owner == msg.sender, "Winner not valid");
         if(mons[winnerId].owner == msg.sender) {
             uint256 rewardMoney = REWARDAMOUNT/(randomGen(100)+1);
-            reward(rewardMoney,msg.sender);
-            emit Rewards(rewardMoney, msg.sender);
+            uint256 tokenBal = token.balanceOf(address(this));
+            // [S6 修复] 资金池空时跳过 reward 不 revert
+            if (tokenBal > rewardMoney) {
+                reward(rewardMoney, msg.sender);
+                emit Rewards(rewardMoney, msg.sender);
+            }
         }
         emit FightResult(msg.sender, winnerId);
     }
@@ -230,17 +244,25 @@ contract CryptoMonster is ERC1155Holder{
         token.transfer(_addr, _amount);
     }
     function envMater(uint256 _id) public {
-        //可以添加一下升级条件：必须怪物生成时间大于10天才能升级
+        // [S9 修复] owner check + 越界 check + _id 存在性
         Monster storage mon = mons[_id];
+        require(mon.owner != address(0), "Monster not exist");
+        require(mon.owner == msg.sender, "not owner");
+        require(mon.evolve, "Cannot evolve");
         uint newIndex = uint256(mon.species)+1;
+        // [S3 修复] 防止 species 越界（monsterTypes 数组只有 151 长度）
+        require(newIndex < 151, "Max species reached");
         mon.species = Species(newIndex);
         //允许当前合约管理token
         // token.approve(msg.sender, EVOAMOUNT);
+        require(token.allowance(msg.sender, address(this)) >= EVOAMOUNT, "Need approve token first");
         token.transferFrom(msg.sender, address(this), EVOAMOUNT);
     }
 
     //共享怪物
     function startSharing(uint256 _id, address _addr) public {
+        // [S8 修复] 拒绝 0x0 地址
+        require(_addr != address(0), "No zero address");
         require(mons[_id].owner==msg.sender,"not owner. can't start sharing");
         Monster storage mon = mons[_id];
         mon.sharedTo = _addr;

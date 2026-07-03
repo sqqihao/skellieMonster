@@ -1,0 +1,1 @@
+"use strict";(self.webpackChunkfontend=self.webpackChunkfontend||[]).push([[8274],{8274:(e,n,f)=>{f.r(n),f.d(n,{default:()=>s.n});var s=f(4537)}}]);

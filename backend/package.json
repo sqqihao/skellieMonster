@@ -1,5 +1,12 @@
 {
   "name": "hardhat-project",
+  "version": "0.1.0",
+  "scripts": {
+    "compile":    "hardhat compile",
+    "start-node": "hardhat node --hostname 0.0.0.0 --port 8545",
+    "deploy":     "hardhat run scripts/deploy.js --network localhost",
+    "test":       "hardhat test"
+  },
   "devDependencies": {
     "@nomicfoundation/hardhat-toolbox": "^5.0.0",
     "hardhat": "^2.22.13"

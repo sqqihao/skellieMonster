@@ -1,7 +1,9 @@
-// require hre, { ethers } from "hardhat";
+// We use hardhat's configured localhost network (chainId 31337 by default).
+// `npm run start-node` boots the node at http://127.0.0.1:8545.
 const hre = require("hardhat");
 const ethers = hre.ethers;
 const fs = require("fs");
+const path = require("path");
 
 // const { ethers } = require("ethers");
 
@@ -38,12 +40,23 @@ async function main() {
 
 
 
-  await nftMonster.transferToken(cryptoMonsterAddress,0,5**15)
-  await nftMonster.transferToken(cryptoMonsterAddress,1,5**15)
-  await nftMonster.transferToken(cryptoMonsterAddress,2,5**15)
-  await nftMonster.transferToken(cryptoMonsterAddress,3,5**15)
-  await nftMonster.transferToken(cryptoMonsterAddress,4,5**15)
-  await nftMonster.transferToken(cryptoMonsterAddress,5,5**15)
+  // [S7 修复] 给 CryptoMonster 合约 mint 一笔 TM 作为 fight reward 资金池，
+  // 否则合约持有 TM = 0，所有 fight reward 都会跳过。
+  // [F-fix] 用 ethers.parseUnits 转 BigInt 避免 JS Number 精度溢出（10**18 > 2^53）
+  tx = await tokenMonster.mint(cryptoMonsterAddress, ethers.parseUnits("1", 18));
+  await tx.wait();
+
+  // Write deployed addresses to repo-root deployed-addresses.json so frontend
+  // scripts/build-contractCfg.js can pick them up regardless of CWD.
+  const addresses = {
+    tokenAddress: tokenMonsterAddress,
+    nftAddress:   nftMonsterAddress,
+    monsterAddress: cryptoMonsterAddress,
+  };
+  const outPath = path.join(__dirname, '..', '..', 'deployed-addresses.json');
+  fs.writeFileSync(outPath, JSON.stringify(addresses, null, 2));
+  console.log('Saved deployed addresses → ' + outPath);
+  console.log(JSON.stringify(addresses, null, 2));
 
   // // console.log(contract.interface.format('json'))
   // let data = {

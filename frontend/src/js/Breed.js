@@ -6,6 +6,7 @@ import Col from 'react-bootstrap/Col';
 import {addForSaleDiv, bgStyle, breedDiv, breedOption, buyDiv, imgDiv, monName, nameDiv, names, removeFromSaleDiv, statDiv} from "./components/utils.js"
 import Spinner from './components/Spinner'
 import { Modal, Button } from 'react-bootstrap';
+import { EmptyPlaceholder } from "./components/EmptyPlaceholder"
 
 
 function Breed(props){
@@ -57,23 +58,31 @@ function Breed(props){
 			<Modal.Body>
 
 		      <Row className="justify-content-center">
-			        <Col  md={{ span: 6}}>
+		        <Col  md={{ span: 6}}>
 
-		        	{mons&&mons.map(function(mon){
-		        		return (
-					        <React.Fragment key={mon.id}>
-					          <div className="mon" onClick={()=>{ selectMaster(mon.id); }}>
-					            <figure className="my-figure">
-					              {nameDiv(mon)}
-					              {imgDiv(mon)}
-					              <figcaption>{statDiv(mon)}</figcaption>
-					            </figure>
-		                        
-					          </div>
-					        </React.Fragment>)
+		        	{!mons || mons.length === 0 ? (
+		        		<div style={{padding: '20px'}}>
+		        			<EmptyPlaceholder
+		        				icon="🥚"
+		        				title="No Creatures to Breed"
+		        				message="You need at least one creature to start breeding."
+		        			/>
+		        		</div>
+		        	) : mons.map(function(mon){
+		        	return (
+				          <React.Fragment key={mon.id}>
+				            <div className="mon" onClick={()=>{ selectMaster(mon.id); }}>
+				              <figure className="my-figure">
+				                {nameDiv(mon)}
+				                {imgDiv(mon)}
+				                <figcaption>{statDiv(mon)}</figcaption>
+				              </figure>
+	                           
+				            </div>
+				          </React.Fragment>)
 		        	})}
-				    
-			        </Col>
+		        
+		        </Col>
 		      </Row>
 			</Modal.Body>
 

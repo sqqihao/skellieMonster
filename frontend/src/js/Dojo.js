@@ -6,6 +6,7 @@ import Col from 'react-bootstrap/Col';
 import Spinner from './components/Spinner'
 import {addForSaleDiv, bgStyle, breedDiv, breedOption, fightOption, buyDiv, imgDiv, monName, nameDiv, names, removeFromSaleDiv, statDiv} from "./components/utils.js"
 import { Modal, Button } from 'react-bootstrap';
+import { EmptyPlaceholder } from "./components/EmptyPlaceholder"
 
 
 
@@ -66,27 +67,35 @@ function Dojo(props){
 
 	return (
 		<>
-			<Modal show={show} className="rpgui-content custom-modal" fullscreen={true} onHide={() => setShow(false)}>
-				<Modal.Body>
+		<Modal show={show} className="rpgui-content custom-modal" fullscreen={true} onHide={() => setShow(false)}>
+			<Modal.Body>
 
-			      <Row className="justify-content-center">
-				        <Col  md={{ span: 6}}>
-			        	{mons&&mons.map(function(mon){
-			        		return (
-						        <React.Fragment key={mon.id}>
-						          <div className="mon" onClick={()=>{ selectMaster(mon.id); }}>
-						            <figure className="my-figure">
-						              {nameDiv(mon)}
-						              {imgDiv(mon)}
-						              <figcaption>{statDiv(mon)}</figcaption>
-						            </figure>
-			                        
-						          </div>
-						        </React.Fragment>)
-			        	})}
-				        </Col>
-			      </Row>
-				</Modal.Body>
+		      <Row className="justify-content-center">
+		        <Col  md={{ span: 6}}>
+		        	{!mons || mons.length === 0 ? (
+		        		<div style={{padding: '20px'}}>
+		        			<EmptyPlaceholder
+		        				icon="⚔️"
+		        				title="No Creatures to Fight"
+		        				message="You need at least one creature to enter the Dojo."
+		        			/>
+		        		</div>
+		        	) : mons.map(function(mon){
+		        	return (
+				          <React.Fragment key={mon.id}>
+				            <div className="mon" onClick={()=>{ selectMaster(mon.id); }}>
+				              <figure className="my-figure">
+				                {nameDiv(mon)}
+				                {imgDiv(mon)}
+				                <figcaption>{statDiv(mon)}</figcaption>
+				              </figure>
+	                           
+				            </div>
+				          </React.Fragment>)
+		        	})}
+		        </Col>
+		      </Row>
+			</Modal.Body>
 
 				<Modal.Footer>
 					<Button variant="secondary" onClick={handleClose}>

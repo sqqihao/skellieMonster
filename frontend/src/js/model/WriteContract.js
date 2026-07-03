@@ -1,24 +1,12 @@
 import {config} from "../../wagmiconf.js";
 import {conAddr} from "../../constant.js";
 
+import { readContract, writeContract, getAccount, waitForTransactionReceipt } from '@wagmi/core';
 
-import { ethers } from 'ethers';
-import { readContract,writeContract ,simulateContract,getAccount,waitForTransactionReceipt} from '@wagmi/core'
-
-
-
-// export const isApprovedForAll = async function(userAddr, marketAddr){
-// 	const args = [userAddr, marketAddr];
-// 	let isApproved = await readContract(config,{
-// 		address: conAddr.tokenAddr,
-// 		abi: conAddr.tokenABI,
-// 		functionName: "isApprovedForAll",
-// 		args:args
-// 	});
-
-//     return isApproved;
-// }
-
+// 关键修复：原代码在模块顶层 `const { address } = getAccount(config)` 解构，
+// 但模块加载时 wallet 还没连 → address 永远 undefined，wagmi 报 "Connector not connected"。
+// 改成在每个 write 函数内部 getAccount 拿当前地址。
+const getAddr = () => getAccount(config).address;
 
 export const waitReceipt = async function(hash){
 	const transactionReceipt = await waitForTransactionReceipt(config, {
@@ -27,215 +15,161 @@ export const waitReceipt = async function(hash){
 	return transactionReceipt;
 }
 
-
-// export const setApprovalForAll = async function(marketAddr, state){
-// 	const args = [marketAddr, state]
-// 	let tx = await writeContract(config,{
-// 		address: conAddr.tokenAddr,
-// 		abi: conAddr.tokenABI,
-// 		functionName: "setApprovalForAll",
-// 		args:args
-// 	});
-
-// 	return tx;
-// }
-
-const { address } = getAccount(config)
-
 export const WriteContract = {
 
-	sellMon: async function (_id,_price){
-
-		const args = [_id,_price];
-
-		let tx = await writeContract(config,{
+	sellMon: async function (_id, _price){
+		const args = [_id, _price];
+		let tx = await writeContract(config, {
 			address: conAddr.monsterAddr,
 			abi: conAddr.monsterABI,
+			account: getAddr(),
 			functionName: "addSale",
-			args:args
+			args: args,
 		});
 		return tx;
 	},
 
-	buyMon : async function (_id,_price){
-		//ethers.parseEther(String(_price))
-
-		let tx = await writeContract(config,{
+	buyMon: async function (_id, _price){
+		// eslint-disable-next-line no-undef
+		const priceBig = typeof _price === 'bigint' ? _price : BigInt(String(_price));
+		// 第一笔：approve TokenMonster spend
+		let tx = await writeContract(config, {
 			address: conAddr.tokenAddr,
 			abi: conAddr.tokenABI,
+			account: getAddr(),
 			functionName: "approve",
-			args:[conAddr.monsterAddr,_price],
-			// value:_price
+			args: [conAddr.monsterAddr, priceBig],
 		});
 
-		// await tx.wait();
-
+		// 第二笔：buyMonster
 		const args = [_id];
-		tx = await writeContract(config,{
+		tx = await writeContract(config, {
 			address: conAddr.monsterAddr,
 			abi: conAddr.monsterABI,
+			account: getAddr(),
 			functionName: "buyMonster",
-			args:args,
-			// value:_price
+			args: args,
 		});
-		// let recpt = await tx.wait();
-		// console.log(recpt)
-	    return tx;
+		return tx;
 	},
 
-	delMon:async function(_id){
+	delMon: async function(_id){
 		const args = [_id];
-		let tx = await writeContract(config,{
+		let tx = await writeContract(config, {
 			address: conAddr.monsterAddr,
 			abi: conAddr.monsterABI,
+			account: getAddr(),
 			functionName: "removeSale",
-			args:args
+			args: args,
 		});
 		return tx;
 	},
 
-	breed:async function(_id1,_id2){
-		const args = [_id1,_id2];
-		let tx = await writeContract(config,{
+	breed: async function(_id1, _id2){
+		const args = [_id1, _id2];
+		let tx = await writeContract(config, {
 			address: conAddr.monsterAddr,
 			abi: conAddr.monsterABI,
+			account: getAddr(),
 			functionName: "breedMonster",
-			args:args
+			args: args,
 		});
 		return tx;
 	},
 
-	fight:async function(_id1,_id2){
-		// debugger;
-		const args = [_id1,_id2];
-		let tx = await writeContract(config,{
+	fight: async function(_id1, _id2){
+		const args = [_id1, _id2];
+		let tx = await writeContract(config, {
 			address: conAddr.monsterAddr,
 			abi: conAddr.monsterABI,
+			account: getAddr(),
 			functionName: "fight",
-			args:args
+			args: args,
 		});
-		console.log(conAddr)
-		console.log("tx is :" + tx);
-		// let res = await tx.wait()
-		// console.log(res)
-		return await waitReceipt(tx)
-		// return 1;
-		//return tx;
+		return await waitReceipt(tx);
 	},
-	startShare:async function(_id,_addr){
 
-		const { address } = getAccount(config)
-		const args = [_id,_addr];
-		let tx = await writeContract(config,{
+	startShare: async function(_id, _addr){
+		const args = [_id, _addr];
+		let tx = await writeContract(config, {
 			address: conAddr.monsterAddr,
 			abi: conAddr.monsterABI,
-			account:address,
+			account: getAddr(),
 			functionName: "startSharing",
-			args:args
+			args: args,
 		});
-		// let res = await tx.wait()
-		console.log(tx);
+		return tx;
 	},
-	shopShare:async function(_id){
 
-		const { address } = getAccount(config)
+	shopShare: async function(_id){
 		const args = [_id];
-		let tx = await writeContract(config,{
+		let tx = await writeContract(config, {
 			address: conAddr.monsterAddr,
 			abi: conAddr.monsterABI,
-			account:address,
+			account: getAddr(),
 			functionName: "stopSharing",
-			args:args
+			args: args,
 		});
-		// let res = await tx.wait()
-		console.log(tx);
+		return tx;
 	},
-	buyItem:async function(_id,_price,_units){
-		/*
-		const { address } = getAccount(config)
-		const args = [address, conAddr.monsterAddr];
-		let isApprove = await readContract(config,{
-			address: conAddr.nftAddr,
-			abi: conAddr.nftABI,
-			account:address,
-			functionName: "isApprovedForAll",
-			args:args
-		});
 
-		console.log(isApprove);
-		if(!isApprove){
-
-			const _args = [conAddr.monsterAddr, true]
-			let tx = await writeContract(config,{
-				address: conAddr.nftAddr,
-				abi: conAddr.nftABI,
-				functionName: "setApprovalForAll",
-				args:_args
-			});
-
-
-			const transactionReceipt = await waitReceipt(tx)
-
-		}
-		*/
-		let tx = await writeContract(config,{
+	buyItem: async function(_id, _price, _units){
+		// eslint-disable-next-line no-undef
+		const priceBig = typeof _price === 'bigint' ? _price : BigInt(String(_price));
+		// eslint-disable-next-line no-undef
+		const unitsBig = typeof _units === 'bigint' ? _units : BigInt(String(_units));
+		const total = priceBig * unitsBig;
+		let tx = await writeContract(config, {
 			address: conAddr.tokenAddr,
 			abi: conAddr.tokenABI,
+			account: getAddr(),
 			functionName: "approve",
-			args:[conAddr.monsterAddr,_price*_units],
-			// value:_price
+			args: [conAddr.monsterAddr, total],
 		});
 
-		// await tx.wait();
-
-		const buyArgs = [_id,_units];
-		tx = await writeContract(config,{
+		const buyArgs = [_id, unitsBig];
+		tx = await writeContract(config, {
 			address: conAddr.monsterAddr,
 			abi: conAddr.monsterABI,
+			account: getAddr(),
 			functionName: "buyItem",
-			args:buyArgs
+			args: buyArgs,
 		});
-			
-		console.log(buyArgs);
 		return tx;
-		
 	},
-	burnItem:async function(_id,_units){
 
-		const { address } = getAccount(config)
-		const args = [address, conAddr.monsterAddr];
-		let isApprove = await readContract(config,{
+	burnItem: async function(_id, _units){
+		const addr = getAddr();
+		const args = [addr, conAddr.monsterAddr];
+		let isApprove = await readContract(config, {
 			address: conAddr.nftAddr,
 			abi: conAddr.nftABI,
-			account:address,
+			account: addr,
 			functionName: "isApprovedForAll",
-			args:args
+			args: args,
 		});
 
-		console.log(isApprove);
 		if(!isApprove){
-			const _args = [conAddr.monsterAddr, true]
-			let tx = await writeContract(config,{
+			const _args = [conAddr.monsterAddr, true];
+			let tx = await writeContract(config, {
 				address: conAddr.nftAddr,
 				abi: conAddr.nftABI,
+				account: addr,
 				functionName: "setApprovalForAll",
-				args:_args
+				args: _args,
 			});
-			const transactionReceipt = await waitReceipt(tx)
+			await waitReceipt(tx);
 		}
 
-		const sellArgs = [_id,_units];
-		// debugger;
-		let tx = await writeContract(config,{
+		const sellArgs = [_id, _units];
+		let tx = await writeContract(config, {
 			address: conAddr.monsterAddr,
 			abi: conAddr.monsterABI,
+			account: addr,
 			functionName: "burnItem",
-			args:sellArgs
+			args: sellArgs,
 		});
-			
-		console.log(sellArgs);
 		return tx;
-	}
-	
-}
+	},
 
+};

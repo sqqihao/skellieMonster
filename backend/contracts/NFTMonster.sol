@@ -13,14 +13,17 @@ contract NFTMonster is ERC1155,Ownable{
     uint256 public constant SHIELD = 4;
     uint256 public constant LOKIS_HAMMER = 5;
     constructor() ERC1155("") Ownable(msg.sender){
-        _mint(msg.sender, HEALING_POTION, 10**27, "");
-        _mint(msg.sender, MANA_POTION, 10**27, "");
-        _mint(msg.sender, MAGIC_POTION, 10**27, "");
-        _mint(msg.sender, SWORD, 10**27, "");
-        _mint(msg.sender, SHIELD, 10**27, "");
-        _mint(msg.sender, LOKIS_HAMMER, 10**27, "");
+        // [S10 修复] 部署时把 NFT mint 给合约自己（不是 deployer），
+        // 这样 transferToken / buyItem 才能从合约 transferFrom 出去。
+        _mint(address(this), HEALING_POTION, 10**27, "");
+        _mint(address(this), MANA_POTION, 10**27, "");
+        _mint(address(this), MAGIC_POTION, 10**27, "");
+        _mint(address(this), SWORD, 10**27, "");
+        _mint(address(this), SHIELD, 10**27, "");
+        _mint(address(this), LOKIS_HAMMER, 10**27, "");
     }
     function transferToken(address to, uint256 id, uint256 amount) public onlyOwner {
-        safeTransferFrom(msg.sender, to, id, amount, "");
+        // [S10 修复] from 应该是合约自己（持有 NFT 的地方）而不是 msg.sender
+        safeTransferFrom(address(this), to, id, amount, "");
     }
 }

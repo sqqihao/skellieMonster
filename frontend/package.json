@@ -1,6 +1,7 @@
 {
   "name": "fontend",
   "version": "0.1.0",
+  "homepage": ".",
   "private": true,
   "dependencies": {
     "@rainbow-me/rainbowkit": "^2.2.0",
@@ -23,8 +24,13 @@
     "web-vitals": "^2.1.4"
   },
   "scripts": {
-    "start": "react-scripts start",
+    "prebuild": "node scripts/build-contractCfg.js",
+    "prestart": "node scripts/build-contractCfg.js",
     "build": "react-scripts build",
+    "build-contractCfg": "node scripts/build-contractCfg.js",
+    "deploy": "cd ../backend && npm run deploy",
+    "start-node": "cd ../backend && npm run start-node",
+    "start": "react-scripts start",
     "test": "react-scripts test",
     "eject": "react-scripts eject"
   },
@@ -45,5 +51,8 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
+  },
+  "devDependencies": {
+    "patch-package": "^8.0.1"
   }
 }

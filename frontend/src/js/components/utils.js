@@ -180,7 +180,13 @@ export const names = [
 // Add background images in an array for easy access
 const bg = [bg0, bg1, bg2, bg3, bg4, bg5, bg6, bg7, bg8, bg9, bg10]
 
-export const monName = (specie) => names[specie]
+// [F1+F15 修复] mon.species 是 viem 返回的 enum，可能返回 number 也可能返回 string。
+// 用 Number() + Number.isInteger 校验确保索引有效。
+export const monName = (specie) => {
+  const idx = Number(specie);
+  if (!Number.isInteger(idx) || idx < 0 || idx >= names.length) return 'Unknown';
+  return names[idx];
+}
 
 export const nameDiv = (mon) => {
   return (
@@ -213,25 +219,36 @@ export const imgDiv = (mon) => {
   )
 }
 
+// 数值上限：合约 CryptoMonster.sol createMonster 是 `100 + randomGen(41)`，
+// 所以 HP/ATK/DEF/SPEED 都在 100-140 范围，最大 140。
+// 进度条按这个上限计算百分比，并夹在 [0, 100]%，防止 bar 越界。
+const STAT_MAX = 140;
+const statPercent = (v) => {
+  const n = Number(v);
+  if (!Number.isFinite(n) || n <= 0) return 0;
+  return Math.max(0, Math.min(100, (n * 100) / STAT_MAX));
+};
+
+//
 //
 export const statDiv = (mon) => {
   return (
     <div className="stat-area">
       <div className="stat-line">
         <label className="stat-label">Hp: </label>
-        <StatBar percentage={(mon.hp * 100) / 160} />
+        <StatBar percentage={statPercent(mon.hp)} />
       </div>
       <div className="stat-line">
         <label className="stat-label">Attack: </label>
-        <StatBar percentage={(mon.atk * 100) / 160} />
+        <StatBar percentage={statPercent(mon.atk)} />
       </div>
       <div className="stat-line">
         <label className="stat-label">Defense: </label>
-        <StatBar percentage={(mon.def * 100) / 160} />
+        <StatBar percentage={statPercent(mon.def)} />
       </div>
       <div className="stat-line">
         <label className="stat-label">Speed: </label>
-        <StatBar percentage={(mon.speed * 100) / 160} />
+        <StatBar percentage={statPercent(mon.speed)} />
       </div>
     </div>
   )

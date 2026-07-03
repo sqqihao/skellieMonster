@@ -5,6 +5,7 @@ import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
 import Spinner from './components/Spinner'
 import {addForSaleDiv, bgStyle, breedDiv, breedOption, buyDiv, imgDiv, monName, nameDiv, names, removeFromSaleDiv, statDiv} from "./components/utils.js"
+import { EmptyPlaceholder } from "./components/EmptyPlaceholder"
 
 
 function Share(props){
@@ -79,40 +80,45 @@ function Share(props){
 
 		        </Col>
 	      </Row>
-	        <Row>
-	          <Col>
-	            <div className="">
-	        	
-		            {mons&&mons.map((mon) => (
-		                <React.Fragment key={mon.id}>
-		                  <div className="mon">
-		                    <figure className="my-figure">
-		                      {nameDiv(mon)}
-		                      {imgDiv(mon)}
-		                      <figcaption>{statDiv(mon)}</figcaption>
-		                    </figure>
-		                    <div className="sharing-div">
-		                      <div className="shareTo-owner">Shared to address: {mon.sharedTo} </div>
-		                      {isStopSharingLoading ? (
-		                        <button className="rpgui-button" type="button" style={{ width: '100%' }}>
-		                          <Spinner color="#000" />
-		                        </button>
-		                      ) : (
-		                        <button
-		                          className="stop-sharing-btn rpgui-button"
-		                          type="button"
-		                          style={{ float: 'right' }}
-		                          onClick={() => stopSharing(mon.id)}>
-		                          Stop sharing
-		                        </button>
-		                      )}
-		                    </div>
-		                  </div>
-		                </React.Fragment>
-		            ))}
-	            </div>
-	          </Col>
-	        </Row>
+        <Row>
+          <Col>
+            <div className="master-container">
+	        	{!mons || mons.length === 0 ? (
+	        		<EmptyPlaceholder
+	        			icon="🔗"
+	        			title="Nothing to Share"
+	        			message="You don't own any creatures. Get one first, then you can share it with friends."
+	        		/>
+	        	) : mons.map((mon) => (
+	                <React.Fragment key={mon.id}>
+	                  <div className="mon">
+	                    <figure className="my-figure">
+	                      {nameDiv(mon)}
+	                      {imgDiv(mon)}
+	                      <figcaption>{statDiv(mon)}</figcaption>
+	                    </figure>
+	                    <div className="sharing-div">
+	                      <div className="shareTo-owner">Shared to address: {mon.sharedTo} </div>
+	                      {isStopSharingLoading ? (
+	                        <button className="rpgui-button" type="button" style={{ width: '100%' }}>
+	                          <Spinner color="#000" />
+	                        </button>
+	                      ) : (
+	                        <button
+	                          className="stop-sharing-btn rpgui-button"
+	                          type="button"
+	                          style={{ float: 'right' }}
+	                          onClick={() => stopSharing(mon.id)}>
+	                          Stop sharing
+	                        </button>
+	                      )}
+	                    </div>
+	                  </div>
+	                </React.Fragment>
+	            ))}
+            </div>
+          </Col>
+        </Row>
 
 
 	    </Container>
