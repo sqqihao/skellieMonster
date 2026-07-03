@@ -25,15 +25,23 @@ const headerStyle = {
 // }
 
 
+// GH Pages base path (when deployed to https://user.github.io/repo/frontend/build/)
+// Empty string for local dev, "/skellieMonster/frontend/build" for production
+const GH_PAGES_BASENAME = (typeof window !== 'undefined' && window.location.hostname.endsWith('.github.io'))
+  ? '/skellieMonster/frontend/build'
+  : '';
+
 function App() {
   return (
 		<Layout className="rpgui-content rpgui-cursor-default">
-			<Router>
+			<Router basename={GH_PAGES_BASENAME}>
 				<Header style={headerStyle}>
 					<Navigation>
 					</Navigation>
 				</Header>
-				<MenuRouters />
+				<Content style={{ minHeight: 'calc(100vh - 64px)' }}>
+					<MenuRouters />
+				</Content>
 			</Router>
 		</Layout>
   );

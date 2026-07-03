@@ -1,7 +1,7 @@
 {
   "files": {
     "main.css": "./static/css/main.40b25a22.css",
-    "main.js": "./static/js/main.5ddfbf8a.js",
+    "main.js": "./static/js/main.0b29dcf1.js",
     "static/js/2676.719297e9.chunk.js": "./static/js/2676.719297e9.chunk.js",
     "static/js/3586.9dfc2818.chunk.js": "./static/js/3586.9dfc2818.chunk.js",
     "static/js/8274.0f5e0822.chunk.js": "./static/js/8274.0f5e0822.chunk.js",
@@ -96,7 +96,7 @@
     "static/media/skelly-rip.png": "./static/media/skelly-rip.28235c21f6bc481f465d.png",
     "index.html": "./index.html",
     "main.40b25a22.css.map": "./static/css/main.40b25a22.css.map",
-    "main.5ddfbf8a.js.map": "./static/js/main.5ddfbf8a.js.map",
+    "main.0b29dcf1.js.map": "./static/js/main.0b29dcf1.js.map",
     "2676.719297e9.chunk.js.map": "./static/js/2676.719297e9.chunk.js.map",
     "3586.9dfc2818.chunk.js.map": "./static/js/3586.9dfc2818.chunk.js.map",
     "6573.2eb18af2.chunk.js.map": "./static/js/6573.2eb18af2.chunk.js.map",
@@ -178,6 +178,6 @@
   },
   "entrypoints": [
     "static/css/main.40b25a22.css",
-    "static/js/main.5ddfbf8a.js"
+    "static/js/main.0b29dcf1.js"
   ]
 }
